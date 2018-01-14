@@ -43,9 +43,10 @@ public class PerlinNoiseDisplay : MonoBehaviour
                 for (int index = 0; index < Trees.Length; index++)
                 {
                     float currentRange = perlinNoise[x, y];
-                    if (currentRange <= Trees[index].range)
+                    if (currentRange >= Trees[index].startRange && currentRange <= Trees[index].endRange)
                     {
-                        GameObject tree = Instantiate(Trees[index].tree, new Vector3((x * meshLength)/2, 1, (y * meshWidth)/2), Trees[index].tree.transform.rotation);
+                        GameObject tree = Instantiate(Trees[index].tree, new Vector3(((x - (meshWidth/2)) * (meshWidth/5)), 1, ((y - (meshLength/2))) * (meshLength/5)), Trees[index].tree.transform.rotation);
+                        spawnedTrees.Add(tree);
                         break;
                     }
                 }
@@ -81,11 +82,21 @@ public class PerlinNoiseDisplay : MonoBehaviour
         }
     }
 
+    public void DeleteObjects()
+    {
+        for (int index = 0; index < spawnedTrees.Count; index++)
+        {
+            DestroyImmediate(spawnedTrees[index]);
+            spawnedTrees.Remove(spawnedTrees[index]);
+        }
+    }
+
     [System.Serializable]
     public class TreeType
     {
         public string name;
-        public float range;
+        public float startRange;
+        public float endRange;
         public GameObject tree;
     }
 }

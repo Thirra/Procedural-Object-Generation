@@ -26,7 +26,13 @@ public class PerlinDisplayEditor : Editor
 
         if (GUILayout.Button("Generate"))
         {
+            mapGenerator.DeleteObjects();
             mapGenerator.DrawNoiseMap();
+        }
+
+        if (GUILayout.Button("Delete"))
+        {
+            mapGenerator.DeleteObjects();
         }
     }
 }
