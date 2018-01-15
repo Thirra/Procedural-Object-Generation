@@ -4,7 +4,17 @@ using UnityEngine;
 
 public class PerlinNoiseDisplay : MonoBehaviour
 {
+    public enum GenerationType
+    {
+        PerlinNoise,
+        Texture
+    }
+
+    public GenerationType generationType;
+
     public Renderer textureRenderer;
+
+    public Texture2D textureMap;
 
     public int meshWidth;
     public int meshLength;
@@ -22,6 +32,24 @@ public class PerlinNoiseDisplay : MonoBehaviour
 
     public TreeType[] Trees;
     public List<GameObject> spawnedTrees;
+
+    public void ProceduralGeneration()
+    {
+        switch (generationType)
+        {
+            case GenerationType.PerlinNoise:
+                {
+                    DrawNoiseMap();
+                }
+                break;
+
+            case GenerationType.Texture:
+                {
+                    DrawTextureMap();
+                }
+                break;
+        }
+    }
 
     public void DrawNoiseMap()
     {
@@ -60,6 +88,34 @@ public class PerlinNoiseDisplay : MonoBehaviour
 
         textureRenderer.sharedMaterial.mainTexture = texture;
         textureRenderer.transform.localScale = new Vector3(width, 1, length);
+    }
+
+    public void DrawTextureMap()
+    {
+        if (textureMap != null)
+        {
+            Color32[] pixels = textureMap.GetPixels32();
+
+            for (int x = 0; x < textureMap.width; x++)
+            {
+                for (int y = 0; y < textureMap.height; y++)
+                {
+                    Color32 pixel = pixels[x + y * textureMap.width];
+                    int p = ((256 * 256 + pixel.r) * 256 + pixel.b) * 256 + pixel.g;
+                    int b = p % 256;
+                    p = Mathf.FloorToInt(p / 256);
+                    int g = p % 256;
+                    p = Mathf.FloorToInt(p / 256);
+                    int r = p % 256;
+                    float l = (0.2126f * r / 255f) + 0.7152f * (g / 255f) + 0.0722f * (b / 255f);
+                    Color c = new Color(l, l, l, 1);
+                    textureMap.SetPixel(x, y, c);
+                }
+            }
+            textureMap.Apply();
+
+            textureRenderer.sharedMaterial.mainTexture = textureMap;
+        }
     }
 
     void OnValidate()
