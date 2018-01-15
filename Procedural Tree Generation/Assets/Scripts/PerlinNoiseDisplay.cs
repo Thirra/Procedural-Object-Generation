@@ -108,8 +108,17 @@ public class PerlinNoiseDisplay : MonoBehaviour
                     p = Mathf.FloorToInt(p / 256);
                     int r = p % 256;
                     float l = (0.2126f * r / 255f) + 0.7152f * (g / 255f) + 0.0722f * (b / 255f);
-                    Color c = new Color(l, l, l, 1);
+                    Color c = new Color(l, l, l, 1);            
                     textureMap.SetPixel(x, y, c);
+
+                    for (int index = 0; index < Trees.Length; index++)
+                    {
+                        if (l >= Trees[index].startRange && l <= Trees[index].endRange)
+                        {
+                            GameObject tree = Instantiate(Trees[index].tree, new Vector3((((x * meshWidth/2)/25) - (meshWidth * 5.1f)), 1, ((y * meshLength)/25) - (meshLength * 5.1f)), Trees[index].tree.transform.rotation);
+                            spawnedTrees.Add(tree);
+                        }
+                    }
                 }
             }
             textureMap.Apply();
