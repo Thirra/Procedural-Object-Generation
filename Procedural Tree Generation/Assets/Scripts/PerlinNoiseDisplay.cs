@@ -2,6 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class TreeType
+{
+    public string name;
+    [Range(0, 1)]
+    public float startRange;
+    [Range(0, 1)]
+    public float endRange;
+    [Range(0, 100)]
+    public float spawnDensity;
+    public GameObject tree;
+    //Proabbly don't need this as a public variable
+    public List<GameObject> spawnedTrees;
+}
+
+[ExecuteInEditMode]
 public class PerlinNoiseDisplay : MonoBehaviour
 {
     public enum GenerationType
@@ -13,25 +29,23 @@ public class PerlinNoiseDisplay : MonoBehaviour
     public GenerationType generationType;
 
     public Renderer textureRenderer;
-
-    public Texture2D textureMap;
-
+    public GameObject mesh;
     public int meshWidth;
     public int meshLength;
-    public float noiseScale;
 
+    //Texture
+    public Texture2D textureMap;
+
+    //Perlin noise
+    public float noiseScale;
     public int octaves;
     [Range(0, 1)]
     public float persistance;
     public float lacunarity;
-
     public int seed;
     public Vector2 offset;
 
-    public bool autoUpdate;
-
-    public TreeType[] Trees;
-    public List<GameObject> spawnedTrees;
+    public List<TreeType> Trees;
 
     public void ProceduralGeneration()
     {
@@ -68,13 +82,13 @@ public class PerlinNoiseDisplay : MonoBehaviour
             {
                 colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, perlinNoise[x, y]);
 
-                for (int index = 0; index < Trees.Length; index++)
+                for (int index = 0; index < Trees.Count; index++)
                 {
                     float currentRange = perlinNoise[x, y];
                     if (currentRange >= Trees[index].startRange && currentRange <= Trees[index].endRange)
                     {
                         GameObject tree = Instantiate(Trees[index].tree, new Vector3(((x - (meshWidth/2)) * (meshWidth/5)), 1, ((y - (meshLength/2))) * (meshLength/5)), Trees[index].tree.transform.rotation);
-                        spawnedTrees.Add(tree);
+                        Trees[index].spawnedTrees.Add(tree);
                         break;
                     }
                 }
@@ -111,12 +125,19 @@ public class PerlinNoiseDisplay : MonoBehaviour
                     Color c = new Color(l, l, l, 1);            
                     textureMap.SetPixel(x, y, c);
 
-                    for (int index = 0; index < Trees.Length; index++)
+                    for (int index = 0; index < Trees.Count; index++)
                     {
-                        if (l >= Trees[index].startRange && l <= Trees[index].endRange)
+                        if (l > Trees[index].startRange && l < Trees[index].endRange)
                         {
-                            GameObject tree = Instantiate(Trees[index].tree, new Vector3((((x * meshWidth/2)/25) - (meshWidth * 5.1f)), 1, ((y * meshLength)/25) - (meshLength * 5.1f)), Trees[index].tree.transform.rotation);
-                            spawnedTrees.Add(tree);
+                            Vector3 thisPosition = new Vector3((((x * meshWidth / 2) / 25) - (meshWidth * 5f)), 10, ((y * meshLength) / 25) - (meshLength * 5f));
+                            int randomNumber = Random.Range(0, 100);
+
+                            Collider[] overlapObjects = Physics.OverlapSphere(thisPosition, 5);
+                            if (overlapObjects.Length == 0 && randomNumber <= Trees[index].spawnDensity)
+                            {
+                                GameObject tree = Instantiate(Trees[index].tree, thisPosition, Trees[index].tree.transform.rotation);
+                                Trees[index].spawnedTrees.Add(tree);
+                            }
                         }
                     }
                 }
@@ -124,6 +145,31 @@ public class PerlinNoiseDisplay : MonoBehaviour
             textureMap.Apply();
 
             textureRenderer.sharedMaterial.mainTexture = textureMap;
+        }
+    }
+
+    public void CheckMeshHeight(GameObject tree)
+    {
+        float maxDistance = (tree.GetComponent<Collider>().bounds.size.y / 2) + 0.1f;
+
+        RaycastHit hit;
+        if (Physics.Raycast(tree.transform.position, -Vector3.up, out hit))
+        {
+            if (hit.distance > maxDistance)
+            {
+                float amountToMove = hit.distance - maxDistance;
+                Vector3 position = tree.transform.position;
+                position.y -= amountToMove;
+                tree.transform.position = position;
+            }
+        }
+    }
+
+    public void MoveGameObjects(int treeIndex)
+    {
+        for (int index = 0; index < Trees[treeIndex].spawnedTrees.Count; index++)
+        {
+            CheckMeshHeight(Trees[treeIndex].spawnedTrees[index]);
         }
     }
 
@@ -147,21 +193,12 @@ public class PerlinNoiseDisplay : MonoBehaviour
         }
     }
 
-    public void DeleteObjects()
+    public void DeleteObjects(int index)
     {
-        for (int index = 0; index < spawnedTrees.Count; index++)
+        for (int i = 0; i < Trees[index].spawnedTrees.Count; i++)
         {
-            DestroyImmediate(spawnedTrees[index]);
-            spawnedTrees.Remove(spawnedTrees[index]);
+            DestroyImmediate(Trees[index].spawnedTrees[i]);
+            Trees[index].spawnedTrees.Remove(Trees[index].spawnedTrees[i]);
         }
-    }
-
-    [System.Serializable]
-    public class TreeType
-    {
-        public string name;
-        public float startRange;
-        public float endRange;
-        public GameObject tree;
     }
 }

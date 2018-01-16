@@ -281,23 +281,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f94ea8e281637740a56ec681bfdeda3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generationType: 1
+  generationType: 0
   textureRenderer: {fileID: 1006434395}
-  textureMap: {fileID: 2800000, guid: d95425aadd251b4459c80879d496c2ea, type: 3}
   meshWidth: 50
   meshLength: 50
+  textureMap: {fileID: 2800000, guid: d95425aadd251b4459c80879d496c2ea, type: 3}
   noiseScale: 1.18
   octaves: 1
   persistance: 0.316
   lacunarity: 3.18
   seed: 0
   offset: {x: -0.75, y: -5.61}
-  autoUpdate: 1
   Trees:
   - name: Orange Tree
-    startRange: 0.7
-    endRange: 0.8
+    startRange: 0.683
+    endRange: 1
+    spawnDensity: 70.4
     tree: {fileID: 1669914105168434, guid: 7df048bca90b57b4fa6dc688e273ff8b, type: 2}
+    spawnedTrees: 0
   spawnedTrees: []
 --- !u!4 &1231874980
 Transform:
