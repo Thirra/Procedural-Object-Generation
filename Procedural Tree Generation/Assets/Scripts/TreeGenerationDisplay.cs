@@ -81,6 +81,10 @@ public class TreeGenerationDisplay : MonoBehaviour
                 {
                     GameObject tree = Instantiate(Trees[treeTypeIndex].tree, new Vector3(((x - (meshWidth/2)) * (meshWidth/5)), 1, ((y - (meshLength/2))) * (meshLength/5)), Trees[treeTypeIndex].tree.transform.rotation);
                     Trees[treeTypeIndex].spawnedTrees.Add(tree);
+                    if (Trees[treeTypeIndex].spawnedTrees.Count > 0)
+                    {
+                        tree.transform.parent = Trees[treeTypeIndex].spawnedTrees[0].transform;
+                    }
                     break;
                 }
             }
@@ -129,6 +133,10 @@ public class TreeGenerationDisplay : MonoBehaviour
                         {
                             GameObject tree = Instantiate(Trees[treeTypeIndex].tree, thisPosition, Trees[treeTypeIndex].tree.transform.rotation);
                             Trees[treeTypeIndex].spawnedTrees.Add(tree);
+                            if (Trees[treeTypeIndex].spawnedTrees.Count > 0)
+                            {
+                                tree.transform.parent = Trees[treeTypeIndex].spawnedTrees[0].transform;
+                            }
                         }
                     }
                 }
@@ -177,10 +185,16 @@ public class TreeGenerationDisplay : MonoBehaviour
     /// <param name="index"></param>
     public void DeleteObjects(int index)
     {
-        for (int i = 0; i < Trees[index].spawnedTrees.Count; i++)
+        for (int i = 1; i < Trees[index].spawnedTrees.Count; i++)
         {
             DestroyImmediate(Trees[index].spawnedTrees[i]);
             Trees[index].spawnedTrees.Remove(Trees[index].spawnedTrees[i]);
+        }
+        //Deleting stuff in edit mode is super weird so I added this for safety
+        if (Trees[index].spawnedTrees.Count == 1)
+        {
+            DestroyImmediate(Trees[index].spawnedTrees[0]);
+            Trees[index].spawnedTrees.Remove(Trees[index].spawnedTrees[0]);
         }
     }
 
