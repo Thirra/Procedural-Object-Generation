@@ -4,6 +4,18 @@ using UnityEngine;
 
 public static class PerlinNoise
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="meshWidth"></param>
+    /// <param name="meshLength"></param>
+    /// <param name="seed"></param>
+    /// <param name="scale"></param>
+    /// <param name="octaves"></param>
+    /// <param name="persistance"></param>
+    /// <param name="lacunarity"></param>
+    /// <param name="offset"></param>
+    /// <returns></returns>
     public static float[,] GenerateNoiseMap(int meshWidth, int meshLength, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset)
     {
         float[,] noiseMap = new float[meshWidth, meshLength];

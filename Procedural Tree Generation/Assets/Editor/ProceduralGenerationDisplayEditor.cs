@@ -4,15 +4,15 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.Events;
 
-[CustomEditor (typeof(PerlinNoiseDisplay))]
+[CustomEditor (typeof(TreeGenerationDisplay))]
 [ExecuteInEditMode]
-public class PerlinDisplayEditor : Editor
+public class ProceduralGenerationDisplayEditor : Editor
 {
-    PerlinNoiseDisplay mapGenerator;
+    TreeGenerationDisplay mapGenerator;
 
     public void OnEnable()
     {
-        mapGenerator = (PerlinNoiseDisplay)target;
+        mapGenerator = (TreeGenerationDisplay)target;
     }
 
     public override void OnInspectorGUI()
@@ -29,8 +29,12 @@ public class PerlinDisplayEditor : Editor
         GenerationTypeEditor(generationTypeIndex);
 
         GUILayout.BeginHorizontal();
-        GUILayout.Label("Number of Tree Types: ");
-        EditorGUILayout.IntField(mapGenerator.Trees.Count, GUILayout.Width(80));
+        GUILayout.Label("Game Objects to Generate: ");
+        if (GUILayout.Button("Add Tree Type"))
+        {
+            mapGenerator.Trees.Add(new TreeType());
+            serializedObject.Update();
+        }
         GUILayout.Space(200);
         GUILayout.EndHorizontal();
 
@@ -39,21 +43,41 @@ public class PerlinDisplayEditor : Editor
             int currentIndex = mapGenerator.Trees.IndexOf(tree);
             EditorGUILayout.PropertyField(treeType.GetArrayElementAtIndex(currentIndex), true);
 
-            if (GUILayout.Button("Delete Trees"))
+            GUILayout.BeginHorizontal();
+            if (mapGenerator.generationType == TreeGenerationDisplay.GenerationType.PerlinNoise)
             {
-                mapGenerator.DeleteObjects(currentIndex);
+                if (GUILayout.Button("Generate PerlinNoise Trees"))
+                {
+                    mapGenerator.DrawNoiseMap(currentIndex);
+                }
+            }
+            else
+            {
+                if (GUILayout.Button("Generate Texture Mapped Trees"))
+                {
+                    mapGenerator.DrawTextureMap(currentIndex);
+                }
             }
 
             if (GUILayout.Button("Move Trees Down on Mesh"))
             {
                 mapGenerator.MoveGameObjects(currentIndex);
             }
-        }
-        GUILayout.Space(10);
+            GUILayout.EndHorizontal();
 
-        if (GUILayout.Button("Generate"))
-        {
-            mapGenerator.ProceduralGeneration();
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Delete Generated Trees"))
+            {
+                mapGenerator.DeleteObjects(currentIndex);
+            }
+
+            if (GUILayout.Button("- Delete Tree Type -"))
+            {
+                mapGenerator.Trees.RemoveAt(currentIndex);
+                serializedObject.Update();
+            }
+            GUILayout.EndHorizontal();
         }
         serializedObject.ApplyModifiedProperties();
     }
