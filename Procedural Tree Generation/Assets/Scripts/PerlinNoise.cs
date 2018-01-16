@@ -5,7 +5,7 @@ using UnityEngine;
 public static class PerlinNoise
 {
     /// <summary>
-    /// 
+    /// Generation of a perlin noise map to be applied to the mesh
     /// </summary>
     /// <param name="meshWidth"></param>
     /// <param name="meshLength"></param>

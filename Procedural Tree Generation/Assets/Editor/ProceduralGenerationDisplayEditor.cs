@@ -25,6 +25,9 @@ public class ProceduralGenerationDisplayEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("generationType"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("mesh"), true);
 
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("meshWidth"), true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("meshLength"), true);
+
         int generationTypeIndex = (int)mapGenerator.generationType;
         GenerationTypeEditor(generationTypeIndex);
 
