@@ -281,17 +281,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f94ea8e281637740a56ec681bfdeda3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generationType: 1
+  generationType: 0
   Trees:
   - name: Red Tree
-    startRange: 0.683
-    endRange: 0.845
+    startRange: 0.289
+    endRange: 0.567
     spawnDensity: 20.6
     tree: {fileID: 1669914105168434, guid: 7df048bca90b57b4fa6dc688e273ff8b, type: 2}
     spawnedTrees: []
   - name: Blue Tree
-    startRange: 0.036
-    endRange: 0.162
+    startRange: 0.683
+    endRange: 0.85
     spawnDensity: 19.8
     tree: {fileID: 1025439220110236, guid: c028009669828064ca199a490cfb3fc3, type: 2}
     spawnedTrees: []

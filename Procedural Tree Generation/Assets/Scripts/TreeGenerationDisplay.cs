@@ -59,7 +59,7 @@ public class TreeGenerationDisplay : MonoBehaviour
     /// Drawing the perlin noise map to a mesh and instantiating trees to specific pixel colour ranges.
     /// </summary>
     /// <param name="treeTypeIndex"></param>
-    public void DrawNoiseMap(int treeTypeIndex)
+    public void DrawNoiseMap(int index)
     {
         float[,] perlinNoise = PerlinNoise.GenerateNoiseMap(meshWidth, meshLength, seed, noiseScale, octaves, persistance, lacunarity, offset);
 
@@ -77,15 +77,15 @@ public class TreeGenerationDisplay : MonoBehaviour
                 colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, perlinNoise[x, y]);
 
                 float currentRange = perlinNoise[x, y];
-                if (currentRange >= Trees[treeTypeIndex].startRange && currentRange <= Trees[treeTypeIndex].endRange)
-                {
-                    GameObject tree = Instantiate(Trees[treeTypeIndex].tree, new Vector3(((x - (meshWidth/2)) * (meshWidth/5)), 1, ((y - (meshLength/2))) * (meshLength/5)), Trees[treeTypeIndex].tree.transform.rotation);
-                    Trees[treeTypeIndex].spawnedTrees.Add(tree);
-                    if (Trees[treeTypeIndex].spawnedTrees.Count > 0)
+
+                    if (currentRange >= Trees[index].startRange && currentRange <= Trees[index].endRange)
                     {
-                        tree.transform.parent = Trees[treeTypeIndex].spawnedTrees[0].transform;
-                    }
-                    break;
+                        GameObject tree = Instantiate(Trees[index].tree, new Vector3(((x - (meshWidth / 2)) * (meshWidth / 5)), 1, ((y - (meshLength / 2))) * (meshLength / 5)), Trees[index].tree.transform.rotation);
+                        Trees[index].spawnedTrees.Add(tree);
+                        if (Trees[index].spawnedTrees.Count > 0)
+                        {
+                            tree.transform.parent = Trees[index].spawnedTrees[0].transform;
+                        }
                 }
             }
         }
